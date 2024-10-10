@@ -49,12 +49,17 @@ userRouter.post("/signup", async (req, res) => {
       userId,
       balance: 1 + Math.random() * 10000,
     });
-    const token = jwt.sign(
-      {
-        userId: savedUser._id,
-      },
-      JWT_SECRET_TOKEN
-    );
+
+    const token = await savedUser.getJWT();
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 8 * 3600000),
+    });
+    // const token = jwt.sign(
+    //   {
+    //     userId: savedUser._id,
+    //   },
+    //   JWT_SECRET_TOKEN
+    // );
 
     res.status(200).json({
       message: "User data saved successfully",
@@ -80,15 +85,14 @@ userRouter.post("/signin", async (req, res) => {
     password: req.body.password,
   });
 
+  const token = await user.getJWT();
+
   if (user) {
-    const token = jwt.sign(
-      {
-        userId: user._id,
-      },
-      JWT_SECRET_TOKEN
-    );
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 8 * 3600000),
+    });
     return res.json({
-      message: user,
+      data: user,
       token: token,
     });
   }

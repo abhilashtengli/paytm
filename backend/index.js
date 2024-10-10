@@ -4,11 +4,13 @@ const app = express();
 const userRouter = require("./src/routes/userRouter");
 const accountRouter = require("./src/routes/accountRouter");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 app.use("/api/v1/", userRouter);
-app.use("/api/v1/", accountRouter)
+app.use("/api/v1/", accountRouter);
 
 connectDB()
   .then(() => {
