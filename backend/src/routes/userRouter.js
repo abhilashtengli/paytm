@@ -4,6 +4,7 @@ const zod = require("zod");
 const JWT_SECRET_TOKEN = require("../config/config");
 const jwt = require("jsonwebtoken");
 const authMiddleware = require("../middleware/authMiddleware");
+const Account = require("../models/account");
 const userRouter = express.Router();
 
 const signupSchema = zod.object({
@@ -13,9 +14,9 @@ const signupSchema = zod.object({
   lastName: zod.string(),
 });
 const updateSchema = zod.object({
-  password: zod.string(),
-  firstName: zod.string(),
-  lastName: zod.string(),
+  password: zod.string().optional(),
+  firstName: zod.string().optional(),
+  lastName: zod.string().optional(),
 });
 const signinSchema = zod.object({
   userName: zod.string().email(),
@@ -43,6 +44,11 @@ userRouter.post("/signup", async (req, res) => {
 
     const user = new User({ firstName, lastName, userName, password });
     const savedUser = await user.save();
+    const userId = savedUser._id;
+    await Account.create({
+      userId,
+      balance: 1 + Math.random() * 10000,
+    });
     const token = jwt.sign(
       {
         userId: savedUser._id,
@@ -99,8 +105,8 @@ userRouter.put("/update", authMiddleware, async (req, res) => {
   }
 
   try {
-    console.log("User ID:", req.userId); // Log the user ID to verify it
-    console.log("Request Body:", req.body);
+    // console.log("User ID:", req.userId); // Log the user ID to verify it
+    // console.log("Request Body:", req.body);
     const user = await User.findOneAndUpdate({ _id: req.userId }, req.body, {
       new: true,
     });

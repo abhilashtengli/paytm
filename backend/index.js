@@ -1,12 +1,14 @@
 const express = require("express");
 const connectDB = require("./src/config/database");
 const app = express();
-const userRouter = require("./src/routes/userRoutes");
+const userRouter = require("./src/routes/userRouter");
+const accountRouter = require("./src/routes/accountRouter");
 const cors = require("cors");
 
 app.use(cors());
 app.use(express.json());
 app.use("/api/v1/", userRouter);
+app.use("/api/v1/", accountRouter)
 
 connectDB()
   .then(() => {
