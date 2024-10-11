@@ -1,6 +1,31 @@
-import { Link, Outlet } from "react-router-dom";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useDispatch, useSelector } from "react-redux";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Base_URL } from "./utils/Constants";
+import axios from "axios";
+import { addUser } from "./utils/UserSlice";
+import { useEffect } from "react";
 
 const Body = () => {
+  const user = useSelector((store) => store.user);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const fetchUserData = async () => {
+    if (user) return;
+    try {
+      const res = await axios.get(Base_URL + "/user", {
+        withCredentials: true,
+      });
+      dispatch(addUser(res.data));
+    } catch (err) {
+      navigate("/signin");
+    }
+  };
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
   return (
     <div className="bg-zinc-400 min-h-screen w-full ">
       <div className="flex justify-center items-center bg-gray-200 ">

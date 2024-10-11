@@ -1,9 +1,38 @@
+import axios from "axios";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { Base_URL } from "../utils/Constants";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/UserSlice";
 
 const Signin = () => {
-  const [emailId, setEmailId] = useState("");
+  const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [error, setError] = useState();
+
+  const handleSignin = async () => {
+    try {
+      const res = await axios.post(
+        Base_URL + "/signin",
+        {
+          userName,
+          password,
+        },
+        { withCredentials: true }
+      );
+      dispatch(addUser(res.data));
+      navigate("/dashboard");
+    } catch (err) {
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("An unexpected error occurred.");
+      }
+    }
+  };
+
   return (
     <>
       <div className="flex justify-center mt-16 ">
@@ -23,8 +52,8 @@ const Signin = () => {
                 <input
                   type="text"
                   placeholder="jhon@example.com"
-                  value={emailId}
-                  onChange={(e) => setEmailId(e.target.value)}
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
                   className="input input-bordered w-full max-w-xs"
                 />
               </label>
@@ -42,9 +71,12 @@ const Signin = () => {
                 </form>
               </label>
             </div>
-            {/* <p className="text-lg text-red-600">{error}</p> */}
+            <p className="text-lg text-red-600">{error}</p>
             <div className="card-actions justify-center mt-5">
-              <button className="w-full border py-2 bg-black text-white rounded-lg hover:bg-gray-900">
+              <button
+                className="w-full border py-2 bg-black text-white rounded-lg hover:bg-gray-900"
+                onClick={() => handleSignin()}
+              >
                 Sign In
               </button>
             </div>

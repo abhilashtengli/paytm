@@ -30,9 +30,7 @@ userRouter.post("/signup", async (req, res) => {
     const { success } = signupSchema.safeParse(req.body);
 
     if (!success) {
-      return res
-        .json({ message: "Invalid email address / invalid input" })
-        .status(400);
+      return res.status(400).json({ message: "invalid input" });
     }
     const { firstName, lastName, userName, password } = req.body;
 
@@ -40,8 +38,8 @@ userRouter.post("/signup", async (req, res) => {
 
     if (isUserPresent) {
       return res
-        .json({ message: "Invalid email address / invalid input" })
-        .status(400);
+        .status(400)
+        .json({ message: "Invalid email address / invalid input" });
     }
 
     const user = new User({ firstName, lastName, userName, password });
@@ -86,6 +84,11 @@ userRouter.post("/signin", async (req, res) => {
     userName: req.body.userName,
     password: req.body.password,
   });
+  if (!user) {
+    return res.status(400).json({
+      message: "Invalid username or password",
+    });
+  }
 
   const token = await user.getJWT();
 
@@ -99,7 +102,7 @@ userRouter.post("/signin", async (req, res) => {
     });
   }
 
-  res.status(400).json({
+  return res.status(400).json({
     message: "Error while signing in",
   });
 });

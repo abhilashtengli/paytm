@@ -11,6 +11,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -26,10 +27,13 @@ const Signup = () => {
         },
         { withCredentials: true }
       );
+
       dispatch(addUser(res.data));
       navigate("/dashboard");
     } catch (err) {
-      console.log(err.message);
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message); 
+      }
     }
   };
 
@@ -95,7 +99,7 @@ const Signup = () => {
                 </form>
               </label>
             </div>
-            {/* <p className="text-lg text-red-600">{error}</p> */}
+            <p className="text-lg text-red-600">{error}</p>
             <div className="card-actions justify-center mt-5">
               <button
                 className="w-full border py-2 bg-black text-white rounded-lg hover:bg-gray-900"
