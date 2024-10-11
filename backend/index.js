@@ -6,7 +6,12 @@ const accountRouter = require("./src/routes/accountRouter");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", //You need to whitelist the domain to avoid Cors
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/v1/", userRouter);

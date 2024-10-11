@@ -12,7 +12,6 @@ const authMiddleware = async (req, res, next) => {
   const cookies = req.cookies;
   const { token } = cookies;
   const decoded = jwt.decode(token);
-  console.log(decoded);
 
   if (!token) {
     return res.status(401).send("Please Login to the account");

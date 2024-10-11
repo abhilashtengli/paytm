@@ -1,12 +1,37 @@
+/* eslint-disable no-unused-vars */
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { Base_URL } from "../utils/Constants";
+import { useDispatch } from "react-redux";
+import { addUser } from "../utils/UserSlice";
 
 const Signup = () => {
-  const [emailId, setEmailId] = useState("");
+  const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  //   const navigate = useNavigate();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleSignup = async () => {
+    try {
+      const res = await axios.post(
+        Base_URL + "/signup",
+        {
+          firstName,
+          lastName,
+          password,
+          userName,
+        },
+        { withCredentials: true }
+      );
+      dispatch(addUser(res.data));
+      navigate("/dashboard");
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
 
   return (
     <>
@@ -51,8 +76,8 @@ const Signup = () => {
                 <input
                   type="text"
                   placeholder="jhon@example.com"
-                  value={emailId}
-                  onChange={(e) => setEmailId(e.target.value)}
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
                   className="input input-bordered w-full max-w-xs"
                 />
               </label>
@@ -72,7 +97,10 @@ const Signup = () => {
             </div>
             {/* <p className="text-lg text-red-600">{error}</p> */}
             <div className="card-actions justify-center mt-5">
-              <button className="w-full border py-2 bg-black text-white rounded-lg hover:bg-gray-900">
+              <button
+                className="w-full border py-2 bg-black text-white rounded-lg hover:bg-gray-900"
+                onClick={() => handleSignup()}
+              >
                 Sign Up
               </button>
             </div>

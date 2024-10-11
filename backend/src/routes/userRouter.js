@@ -7,6 +7,8 @@ const authMiddleware = require("../middleware/authMiddleware");
 const Account = require("../models/account");
 const userRouter = express.Router();
 
+const user_safe_data = "firstName lastName userName";
+
 const signupSchema = zod.object({
   userName: zod.string().email(),
   password: zod.string(),
@@ -141,6 +143,22 @@ userRouter.get("/bulk", authMiddleware, async (req, res) => {
       _id: user._id,
     })),
   });
+});
+
+userRouter.get("/user", authMiddleware, async (req, res) => {
+  try {
+    const loggeddInUserId = req.userId;
+
+    const user = await User.findById(loggeddInUserId).select(user_safe_data);
+
+    if (user) {
+      return res.json({
+        data: user,
+      });
+    }
+  } catch (err) {
+    res.status(404).json({ message: err.message });
+  }
 });
 
 module.exports = userRouter;

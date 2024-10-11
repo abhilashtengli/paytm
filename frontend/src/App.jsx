@@ -4,19 +4,23 @@ import Signin from "./pages/Signin";
 import Dashboard from "./pages/Dashboard";
 import SendMoney from "./pages/SendMoney";
 import Body from "./Body";
+import { Provider } from "react-redux";
+import appStore from "./utils/appStore";
 
 function App() {
   return (
-    <BrowserRouter basename="/">
-      <Routes>
-        <Route path="/" element={<Body />}>
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/signin" element={<Signin />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/send" element={<SendMoney />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <Provider store={appStore}>
+      <BrowserRouter basename="/">
+        <Routes>
+          <Route path="/" element={<Body />}>
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/signin" element={<Signin />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/send" element={<SendMoney />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </Provider>
   );
 }
 
