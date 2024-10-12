@@ -130,12 +130,18 @@ userRouter.put("/update", authMiddleware, async (req, res) => {
 });
 
 userRouter.get("/bulk", authMiddleware, async (req, res) => {
+  const loggeddInUserId = req.userId;
   const filter = req.query.filter || "";
   const regexFilter = new RegExp(filter, "i");
   const users = await User.find({
-    $or: [
-      { firstName: { $regex: regexFilter } },
-      { lastName: { $regex: regexFilter } },
+    $and: [
+      { _id: { $ne: loggeddInUserId } },
+      {
+        $or: [
+          { firstName: { $regex: regexFilter } },
+          { lastName: { $regex: regexFilter } },
+        ],
+      },
     ],
   });
   res.json({
